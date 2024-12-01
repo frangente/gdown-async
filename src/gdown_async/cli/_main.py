@@ -30,9 +30,9 @@ def get_parser() -> argparse.ArgumentParser:
     group.add_argument("--folder-id", help="The ID of a Google Drive folder.")
     group.add_argument("--url", help="The URL of a Google Drive file/folder.")
 
-    parser.add_argument("--output", help="The output directory.", default=".")
-    parser.add_argument("--quiet", help="Suppress output.", action="store_true")
-    parser.add_argument("--force", help="Force download.", action="store_true")
+    parser.add_argument("--output-dir", help="The output directory.", default=".")
+    parser.add_argument("-q", "--quiet", help="Suppress output.", action="store_true")
+    parser.add_argument("-f", "--force", help="Force download.", action="store_true")
 
     return parser
 

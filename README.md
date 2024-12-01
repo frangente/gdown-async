@@ -106,7 +106,7 @@ If you only have the URL of the file or folder, you can use the `--url` flag ins
 To each command, you can also pass the following optional arguments:
 
 - `--quiet` or `-q`: Suppress all output except for errors (default: `False`).
-- `--force`: Overwrite existing files (default: `False`). If this flag is not set, the program will skip downloading files that already exist in the output directory (no check is made to verify that the existing file is the same as the one being downloaded, only the filename is checked).
+- `--force` or `-f`: Overwrite existing files (default: `False`). If this flag is not set, the program will skip downloading files that already exist in the output directory (no check is made to verify that the existing file is the same as the one being downloaded, only the filename is checked).
 
 ## License
 
