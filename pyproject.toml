@@ -1,0 +1,54 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
+
+[project]
+name = "gdown-async"
+version = "0.0.1"
+description = "Google Drive downloader with async support"
+readme = "README.md"
+authors = [
+  { name = "Francesco Gentile", email = "francesco.gentile@unitn.it" },
+]
+requires-python = ">=3.10"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "aiohttp>=3",
+  "anyio>=4",
+  "beautifulsoup4>=4",
+]
+optional-dependencies.cli = [
+  "rich>=13",
+  "typing-extensions>=4",
+]
+scripts.gdown-async = "gdown_async.cli:main"
+
+[dependency-groups]
+lint = [
+  "basedpyright>=1.22",
+  "pyproject-fmt>=2.5",
+  "ruff>=0.8.1",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+src = [ "src" ]
+fix = true
+format.preview = true
+lint.select = [ "ALL" ]
+lint.ignore = [ "COM812", "ISC001", "PLR2004", "TRY301" ]
+lint.fixable = [ "ALL" ]
+lint.pydocstyle.convention = "google"
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.10"
+include = [ "src" ]
+venvPath = "."
