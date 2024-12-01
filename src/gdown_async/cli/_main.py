@@ -6,6 +6,7 @@ import functools
 import sys
 
 import anyio
+import rich
 
 from gdown_async import (
     __version__,
@@ -43,23 +44,24 @@ def main() -> None:
 
     if args.file_id:
         id_, fn = args.file_id, download_file
-        callback = ProgressFileDownloadCallback()
+        callback = ProgressFileDownloadCallback() if not args.quiet else None
     elif args.folder_id:
         id_, fn = args.folder_id, download_folder
-        callback = TreeFolderDownloadCallback()
+        callback = TreeFolderDownloadCallback() if not args.quiet else None
     elif args.url:
         try:
             id_, fn = extract_file_id(args.url), download_file
-            callback = ProgressFileDownloadCallback()
+            callback = ProgressFileDownloadCallback() if not args.quiet else None
         except ValueError:
             try:
                 id_, fn = extract_folder_id(args.url), download_folder
-                callback = TreeFolderDownloadCallback()
+                callback = TreeFolderDownloadCallback() if not args.quiet else None
             except ValueError:
-                sys.exit("Invalid URL.")
+                rich.print("[red]Invalid URL.[/red]")
+                sys.exit(1)
     else:
         # this will never happen, it is just to make basedpyright happy
-        sys.exit("Invalid arguments.")
+        sys.exit(1)
 
     fn = functools.partial(
         fn,
