@@ -215,6 +215,7 @@ async def download_folder(
     *,
     output_dir: os.PathLike[str] | str = ".",
     force: bool = False,
+    max_concurrency: int | None = None,
     callback: FolderDownloadCallback | None = None,
 ) -> None:
     """Downloads a folder from Google Drive.
@@ -230,6 +231,8 @@ async def download_folder(
         force: Whether to force the download of all the files even if they already
             exist. If `False` and a file already exists, the download will be skipped
             (no check is done to verify if the file is complete, corrupted or outdated).
+        max_concurrency: The maximum number of concurrent downloads. If `None`, the
+            number of concurrent downloads is not limited.
         callback: A callback to use for the download of the folder.
 
     Raises:
@@ -251,6 +254,7 @@ async def download_folder(
         if callback is not None:
             await callback.on_folder_setup(folder, path)
 
+        limiter = anyio.CapacityLimiter(max_concurrency) if max_concurrency else None
         async with aiohttp.ClientSession() as session:
             session.headers["User-Agent"] = USER_AGENT
             await _download_folder(
@@ -258,6 +262,7 @@ async def download_folder(
                 path=path,
                 force=force,
                 session=session,
+                limiter=limiter,
                 callback=callback,
             )
 
@@ -347,12 +352,13 @@ async def _check_folder_path(folder: Folder, path: anyio.Path) -> None:
     await path.mkdir(parents=True, exist_ok=True)
 
 
-async def _download_folder(
+async def _download_folder(  # noqa: PLR0913
     folder: Folder,
     path: anyio.Path,
     *,
     force: bool = False,
     session: aiohttp.ClientSession,
+    limiter: anyio.CapacityLimiter | None = None,
     callback: FolderDownloadCallback | None = None,
 ) -> None:
     """Downloads a Google Drive folder recursively."""
@@ -379,6 +385,7 @@ async def _download_folder(
                         path / item.name,
                         force=force,
                         session=session,
+                        limiter=limiter,
                         callback=callback,
                     )
 
@@ -393,12 +400,13 @@ async def _download_folder(
         await callback.on_folder_complete(folder)
 
 
-async def _donwload_file(
+async def _donwload_file(  # noqa: PLR0913
     file: File,
     path: anyio.Path,
     *,
     force: bool,
     session: aiohttp.ClientSession,
+    limiter: anyio.CapacityLimiter | None,
     callback: FileDownloadCallback | None,
 ) -> None:
     if await path.exists() and not force:
@@ -408,4 +416,8 @@ async def _donwload_file(
         return
 
     await path.unlink(missing_ok=True)
-    await download(file, path, session=session, callback=callback)
+    if limiter is not None:
+        async with limiter:
+            await download(file, path, session=session, callback=callback)
+    else:
+        await download(file, path, session=session, callback=callback)

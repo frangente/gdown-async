@@ -103,10 +103,14 @@ gdown-async --folder-id FOLDER_ID --output-dir path/to/output/dir
 
 If you only have the URL of the file or folder, you can use the `--url` flag instead of `--file-id` or `--folder-id`.
 
-To each command, you can also pass the following optional arguments:
+The following optional flags are available for both file and folder downloads:
 
 - `--quiet` or `-q`: Suppress all output except for errors (default: `False`).
 - `--force` or `-f`: Overwrite existing files (default: `False`). If this flag is not set, the program will skip downloading files that already exist in the output directory (no check is made to verify that the existing file is the same as the one being downloaded, only the filename is checked).
+
+When downloading a folder, you can also use the following optional flags:
+
+- `--max-concurrency`: Maximum number of concurrent downloads (default: `None`). If not specified, no limit is set.
 
 ## License
 

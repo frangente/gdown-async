@@ -30,9 +30,17 @@ def get_parser() -> argparse.ArgumentParser:
     group.add_argument("--folder-id", help="The ID of a Google Drive folder.")
     group.add_argument("--url", help="The URL of a Google Drive file/folder.")
 
+    # optional arguments
     parser.add_argument("--output-dir", help="The output directory.", default=".")
     parser.add_argument("-q", "--quiet", help="Suppress output.", action="store_true")
     parser.add_argument("-f", "--force", help="Force download.", action="store_true")
+    parser.add_argument(
+        "--max-concurrency",
+        help="The maximum number of concurrent downloads. "
+        "This is only used for folder downloads.",
+        type=int,
+        default=None,
+    )
 
     return parser
 
@@ -46,22 +54,23 @@ def main() -> None:
         id_, fn = args.file_id, download_file
         callback = ProgressFileDownloadCallback() if not args.quiet else None
     elif args.folder_id:
-        id_, fn = args.folder_id, download_folder
+        id_ = args.folder_id
+        fn = functools.partial(download_folder, max_concurrency=args.max_concurrency)
         callback = TreeFolderDownloadCallback() if not args.quiet else None
-    elif args.url:
+    else:
         try:
             id_, fn = extract_file_id(args.url), download_file
             callback = ProgressFileDownloadCallback() if not args.quiet else None
         except ValueError:
             try:
-                id_, fn = extract_folder_id(args.url), download_folder
+                id_ = extract_folder_id(args.url)
+                fn = functools.partial(
+                    download_folder, max_concurrency=args.max_concurrency
+                )
                 callback = TreeFolderDownloadCallback() if not args.quiet else None
             except ValueError:
                 rich.print("[red]Invalid URL.[/red]")
                 sys.exit(1)
-    else:
-        # this will never happen, it is just to make basedpyright happy
-        sys.exit(1)
 
     fn = functools.partial(
         fn,
