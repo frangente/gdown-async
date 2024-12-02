@@ -66,7 +66,7 @@ def main() -> None:
     fn = functools.partial(
         fn,
         id_,
-        output_dir=args.output,
+        output_dir=args.output_dir,
         force=args.force,
         callback=callback,
     )
