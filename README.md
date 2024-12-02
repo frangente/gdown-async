@@ -92,16 +92,14 @@ anyio.run(main)
 To download a file from Google Drive, you can use the `gdown-async` command:
 
 ```bash
-gdown-async --file-id FILE_ID --output-dir path/to/output/dir
+gdown-async --file FILE_ID_OR_URL --output-dir path/to/output/dir
 ```
 
 Similarly, you can use the `gdown-async` command to download a folder:
 
 ```bash
-gdown-async --folder-id FOLDER_ID --output-dir path/to/output/dir
+gdown-async --folder FOLDER_ID_OR_URL --output-dir path/to/output/dir
 ```
-
-If you only have the URL of the file or folder, you can use the `--url` flag instead of `--file-id` or `--folder-id`.
 
 The following optional flags are available for both file and folder downloads:
 
