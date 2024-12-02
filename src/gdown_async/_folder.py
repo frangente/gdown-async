@@ -236,10 +236,12 @@ async def download_folder(
         callback: A callback to use for the download of the folder.
 
     Raises:
-        NotADirectoryError: If the output path already exists but it is not a directory.
+        ValueError: If the maximum concurrency is less than 1.
         ValueError: If the folder URL is invalid.
         FileNotFoundError: If the folder does not exist.
-        ValueError: If the maximum concurrency is less than 1.
+        NotADirectoryError: If the location where the folder or any of its subfolders
+            should be saved is not a directory.
+        IsADirectoryError: If the location where a file should be saved is a directory.
     """
     if max_concurrency is not None and max_concurrency < 1:
         msg = f"Max concurrency must be greater than 0, got {max_concurrency}."
