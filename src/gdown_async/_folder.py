@@ -239,7 +239,12 @@ async def download_folder(
         NotADirectoryError: If the output path already exists but it is not a directory.
         ValueError: If the folder URL is invalid.
         FileNotFoundError: If the folder does not exist.
+        ValueError: If the maximum concurrency is less than 1.
     """
+    if max_concurrency is not None and max_concurrency < 1:
+        msg = f"Max concurrency must be greater than 0, got {max_concurrency}."
+        raise ValueError(msg)
+
     if isinstance(x, str):
         id_ = extract_folder_id(x) if is_url(x) else x
         folder = await retrieve_folder(id_)
