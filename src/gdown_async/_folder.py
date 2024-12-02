@@ -380,7 +380,7 @@ async def _download_folder(  # noqa: PLR0913
                     )
                 else:
                     fn = functools.partial(
-                        _donwload_file,
+                        _download_file,
                         item,
                         path / item.name,
                         force=force,
@@ -400,7 +400,7 @@ async def _download_folder(  # noqa: PLR0913
         await callback.on_folder_complete(folder)
 
 
-async def _donwload_file(  # noqa: PLR0913
+async def _download_file(  # noqa: PLR0913
     file: File,
     path: anyio.Path,
     *,
