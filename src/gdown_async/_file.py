@@ -266,7 +266,7 @@ async def download(  # noqa: C901, PLR0912, PLR0915
         session: The aiohttp client session.
         callback: A callback to use for the download of the file.
     """
-    response, handle, success = None, None, False
+    response, success = None, False
     try:
         if callback is not None:
             await callback.on_file_setup(file, path)
@@ -318,14 +318,13 @@ async def download(  # noqa: C901, PLR0912, PLR0915
             else:
                 await callback.on_file_resume(file, downloaded, total)
 
-        handle = await anyio.open_file(tmp_path, "ab")
+        async with await anyio.open_file(tmp_path, "ab") as f:
+            async for chunk in response.content.iter_any():
+                await f.write(chunk)
+                downloaded += len(chunk)
 
-        async for chunk in response.content.iter_any():
-            await handle.write(chunk)
-            downloaded += len(chunk)
-
-            if callback is not None:
-                await callback.on_file_progress(file, downloaded, total)
+                if callback is not None:
+                    await callback.on_file_progress(file, downloaded, total)
 
         await tmp_path.rename(path)
         if callback is not None:
@@ -336,11 +335,8 @@ async def download(  # noqa: C901, PLR0912, PLR0915
             await callback.on_file_fail(file, exc)
         raise
     finally:
-        if response is not None:
+        if response is not None and not response.closed:
             response.close()
-
-        if handle is not None:
-            await handle.aclose()
 
         if callback is not None:
             await callback.on_file_cleanup(file, success=success)
