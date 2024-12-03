@@ -5,7 +5,15 @@ import anyio
 import rich
 from rich.console import Console
 from rich.live import Live
-from rich.progress import Progress
+from rich.progress import (
+    BarColumn,
+    DownloadColumn,
+    Progress,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+    TransferSpeedColumn,
+)
 from rich.tree import Tree
 from typing_extensions import override
 
@@ -19,23 +27,44 @@ from gdown_async import File, FileDownloadCallback, Folder, FolderDownloadCallba
 class ProgressFileDownloadCallback(FileDownloadCallback):
     """A callback that displays the file download progress using a progress bar."""
 
-    def __init__(self, console: Console | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        console: Console | None = None,
+        transient: bool = True,
+    ) -> None:
         """Initializes the callback with a console.
 
         Args:
             console: The console to use for output. If `None`, a new console is created
                 using [get_console()][rich.get_console].
+            transient: If `True`, the progress bar is removed after the download is
+                complete. If `False`, the progress bar remains visible.
         """
         self.console = console or rich.get_console()
+        self.transient = transient
         self.progress = None
         self.task_id = None
 
     @override
     async def on_file_setup(self, file: File, path: anyio.Path) -> None:
         self.console.print(f"[cyan]Downloading[/] '{file.name}' to '{path}'")
-        self.progress = Progress(console=self.console, transient=True)
+        self.progress = Progress(
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            BarColumn(),
+            DownloadColumn(),
+            TextColumn("["),
+            TimeElapsedColumn(),
+            TextColumn("<"),
+            TimeRemainingColumn(),
+            TextColumn(","),
+            TransferSpeedColumn(),
+            TextColumn("]"),
+            console=self.console,
+            transient=self.transient,
+        )
         self.progress.start()
-        self.task_id = self.progress.add_task("[cyan]Downloading[/]", start=False)
+        self.task_id = self.progress.add_task("[cyan]Downloading[/]", total=None)
 
     @override
     async def on_file_start(self, file: File, total: int) -> None:
@@ -44,6 +73,7 @@ class ProgressFileDownloadCallback(FileDownloadCallback):
             raise RuntimeError(msg)
 
         self.progress.start_task(self.task_id)
+        self.progress.update(self.task_id, total=total)
 
     @override
     async def on_file_resume(self, file: File, downloaded: int, total: int) -> None:
@@ -52,7 +82,7 @@ class ProgressFileDownloadCallback(FileDownloadCallback):
             raise RuntimeError(msg)
 
         self.progress.start_task(self.task_id)
-        self.progress.update(self.task_id, completed=downloaded)
+        self.progress.update(self.task_id, completed=downloaded, total=total)
 
     @override
     async def on_file_progress(self, file: File, downloaded: int, total: int) -> None:
