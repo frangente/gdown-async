@@ -92,17 +92,18 @@ anyio.run(main)
 To download a file from Google Drive, you can use the `gdown-async` command:
 
 ```bash
-gdown-async --file FILE_ID_OR_URL --output-dir path/to/output/dir
+gdown-async --file FILE_ID_OR_URL
 ```
 
 Similarly, you can use the `gdown-async` command to download a folder:
 
 ```bash
-gdown-async --folder FOLDER_ID_OR_URL --output-dir path/to/output/dir
+gdown-async --folder FOLDER_ID_OR_URL
 ```
 
 The following optional flags are available for both file and folder downloads:
 
+- `--output-dir`: Directory where the file/folder will be downloaded (default: `.`). When downloading a file, the file will be saved inside this directory with the name of the file stored on Google Drive. When downloading a folder, the root folder will be saved inside this directory with the same name as on Google Drive.
 - `--quiet` or `-q`: Suppress all output except for errors (default: `False`).
 - `--force` or `-f`: Overwrite existing files (default: `False`). If this flag is not set, the program will skip downloading files that already exist in the output directory (no check is made to verify that the existing file is the same as the one being downloaded, only the filename is checked).
 
