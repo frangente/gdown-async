@@ -17,7 +17,7 @@ from ._utils import USER_AGENT, is_url
 # --------------------------------------------------------------------------- #
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass
 class File:
     """A Google Drive file."""
 

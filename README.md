@@ -55,7 +55,7 @@ async def main():
     # NOTE: to create a File object you need to use the file_id, not the file URL
     # if you only have the URL, you can use the retrieve_file function to get the file_id
     # file = await retrieve_file("file_id_or_url")
-    # file = File(file.id, name="filename")
+    # file.name = "filename"
 
     await download_file(file, output_dir="path/to/output/dir")
 ```
