@@ -22,10 +22,10 @@ dependencies = [
   "aiohttp>=3",
   "anyio>=4",
   "beautifulsoup4>=4",
+  "typing-extensions>=4",
 ]
 optional-dependencies.cli = [
   "rich>=13",
-  "typing-extensions>=4",
 ]
 scripts.gdown-async = "gdown_async.cli:main"
 

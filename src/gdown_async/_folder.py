@@ -11,6 +11,7 @@ from typing import Protocol
 import aiohttp
 import anyio
 import bs4
+from typing_extensions import Self
 
 from ._file import File, FileDownloadCallback, check_file_path, download
 from ._utils import USER_AGENT, is_url
@@ -26,9 +27,9 @@ class Folder:
 
     id: str
     name: str
-    children: list["File | Folder"]
+    children: list[File | Self]
 
-    def __iter__(self) -> Iterator["File | Folder"]:
+    def __iter__(self) -> Iterator[File | Self]:
         yield from self.children
 
 
