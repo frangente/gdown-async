@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
-import functools
 
 import anyio
 
-from gdown_async import __version__, download_file, download_folder
+from gdown_async import __version__, download_file, download_folder, fetch_folder
 
 from ._callbacks import ProgressFileDownloadCallback, TreeFolderDownloadCallback
 
@@ -23,18 +22,35 @@ def get_parser() -> argparse.ArgumentParser:
 
     # optional arguments
     parser.add_argument(
+        "-o",
         "--output-dir",
         help="The directory where to save the file or folder.",
         default=".",
     )
-    parser.add_argument("-q", "--quiet", help="Suppress output.", action="store_true")
     parser.add_argument(
-        "-f", "--force", help="Overwrite existing files.", action="store_true"
+        "-q",
+        "--quiet",
+        help="Suppress output.",
+        action="store_true",
     )
     parser.add_argument(
+        "-f",
+        "--force",
+        help="Overwrite existing files.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-c",
         "--max-concurrency",
         help="The maximum number of concurrent downloads. "
         "This is only used for folder downloads.",
+        type=int,
+        default=None,
+    )
+    parser.add_argument(
+        "-d",
+        "--depth",
+        help="Up to how many levels to download.",
         type=int,
         default=None,
     )
@@ -46,23 +62,32 @@ def main() -> None:
     """Main entry point for the CLI."""
     parser = get_parser()
     args = parser.parse_args()
+    anyio.run(_download, args)
 
+
+# --------------------------------------------------------------------------- #
+# Private functions
+# --------------------------------------------------------------------------- #
+
+
+async def _download(args: argparse.Namespace) -> None:
     if args.file:
-        fn = functools.partial(
-            download_file,
+        await download_file(
             args.file,
             output_dir=args.output_dir,
             force=args.force,
             callback=ProgressFileDownloadCallback() if not args.quiet else None,
         )
     else:
-        fn = functools.partial(
-            download_folder,
-            args.folder,
+        if args.depth is not None:
+            folder = await fetch_folder(args.folder, depth=args.depth)
+        else:
+            folder = await fetch_folder(args.folder)
+
+        await download_folder(
+            folder,
             output_dir=args.output_dir,
             force=args.force,
             max_concurrency=args.max_concurrency,
             callback=TreeFolderDownloadCallback() if not args.quiet else None,
         )
-
-    anyio.run(fn)

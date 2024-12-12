@@ -103,13 +103,14 @@ gdown-async --folder FOLDER_ID_OR_URL
 
 The following optional flags are available for both file and folder downloads:
 
-- `--output-dir`: Directory where the file/folder will be downloaded (default: `.`). When downloading a file, the file will be saved inside this directory with the name of the file stored on Google Drive. When downloading a folder, the root folder will be saved inside this directory with the same name as on Google Drive.
+- `--output-dir` or `-o`: Directory where the file/folder will be downloaded (default: `.`). When downloading a file, the file will be saved inside this directory with the name of the file stored on Google Drive. When downloading a folder, the root folder will be saved inside this directory with the same name as on Google Drive.
 - `--quiet` or `-q`: Suppress all output except for errors (default: `False`).
 - `--force` or `-f`: Overwrite existing files (default: `False`). If this flag is not set, the program will skip downloading files that already exist in the output directory (no check is made to verify that the existing file is the same as the one being downloaded, only the filename is checked).
 
 When downloading a folder, you can also use the following optional flags:
 
-- `--max-concurrency`: Maximum number of concurrent downloads (default: `None`). If not specified, no limit is set.
+- `--max-concurrency` or `-c`: Maximum number of concurrent downloads (default: `None`). If not specified, no limit is set.
+- `--depth` or `-d`: Maximum depth of the folder structure to download (default: `None`). If not specified, the entire folder structure will be downloaded.
 
 ## License
 
