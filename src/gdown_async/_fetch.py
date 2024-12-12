@@ -42,23 +42,33 @@ async def fetch_file(id_or_url: str) -> File:
     return File(id_, soup.title.text.removesuffix(" - Google Drive"))
 
 
-async def fetch_folder(id_or_url: str) -> Folder:
+async def fetch_folder(id_or_url: str, *, depth: int | None = None) -> Folder:
     """Retrieves the structure of a Google Drive folder.
 
     Args:
         id_or_url: The ID or URL of the Google Drive folder.
+        depth: Up to how many levels the folder structure should be fetched.
+            If `None`, the entire folder structure is fetched.
 
     Returns:
         The folder structure.
 
     Raises:
+        ValueError: If the depth is not a positive integer.
         ValueError: If the folder URL is invalid.
         FileNotFoundError: If the folder does not exist.
     """
+    if depth is not None:
+        if depth < 1:
+            msg = f"The depth must be a positive integer, but got '{depth}'."
+            raise ValueError(msg)
+    elif depth is None:
+        depth = -1
+
     id_ = extract_folder_id(id_or_url) if is_url(id_or_url) else id_or_url
     async with aiohttp.ClientSession() as session:
         init_session(session)
-        folder = await _build_folder(id_, session=session)
+        folder = await _fetch_folder_rec(id_, depth=depth, session=session)
         if folder is None:
             msg = f"No folder found with ID '{id_}'."
             raise FileNotFoundError(msg)
@@ -98,29 +108,32 @@ async def _fetch_folder(id_: str, *, session: aiohttp.ClientSession) -> Folder |
     return Folder(id_, name, files + folders)
 
 
-async def _build_folder(id_: str, *, session: aiohttp.ClientSession) -> Folder | None:
+async def _fetch_folder_rec(
+    id_: str,
+    *,
+    depth: int,
+    session: aiohttp.ClientSession,
+) -> Folder | None:
     """Builds the structure of a Google Drive folder recursively."""
     folder = await _fetch_folder(id_, session=session)
-    if folder is None:
-        return None
+    if folder is None or depth == 1:
+        return folder
 
-    async def _build_child(idx: int) -> None:
-        item = folder.children[idx]
-        if isinstance(item, File):
-            return
-
-        tmp = await _fetch_folder(item.id, session=session)
-        if tmp is None:
+    async def _fetch_child(idx: int) -> None:
+        f = folder.children[idx]
+        f = await _fetch_folder_rec(f.id, depth=depth - 1, session=session)
+        if f is None:
             # Here we raise so that all the other tasks are cancelled
             # and the main task can catch the exception and return None.
             raise RuntimeError
 
-        folder.children[idx] = tmp
+        folder.children[idx] = f
 
     try:
         async with anyio.create_task_group() as tg:
-            for idx in range(len(folder.children)):
-                tg.start_soon(_build_child, idx)
+            for idx, item in enumerate(folder.children):
+                if isinstance(item, Folder):
+                    tg.start_soon(_fetch_child, idx)
     except Exception:  # noqa: BLE001
         return None
 
