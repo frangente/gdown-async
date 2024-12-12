@@ -48,13 +48,13 @@ If passed a `FILE_ID` or `FILE_URL`, the function will download the correspondin
 
 ```python
 import anyio
-from gdown_async import download_file, File, retrieve_file
+from gdown_async import download_file, File, fetch_file
 
 async def main():
     file = File("file_id", name="filename")
     # NOTE: to create a File object you need to use the file_id, not the file URL
-    # if you only have the URL, you can use the retrieve_file function to get the file_id
-    # file = await retrieve_file("file_id_or_url")
+    # if you only have the URL, you can use the fetch_file function to get the file_id
+    # file = await fetch_file("file_id_or_url")
     # file.name = "filename"
 
     await download_file(file, output_dir="path/to/output/dir")
@@ -76,10 +76,10 @@ The `download_folder` function will download the entire folder structure into th
 
 ```python
 import anyio
-from gdown_async import download_folder, Folder, retrieve_folder
+from gdown_async import download_folder, Folder, fetch_folder
 
 async def main():
-    folder = await retrieve_folder("folder_id_or_url")
+    folder = await fetch_folder("folder_id_or_url")
     # modify the folder object as needed
 
     await download_folder(folder, output_dir="path/to/output/dir")

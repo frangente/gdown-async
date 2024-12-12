@@ -10,7 +10,7 @@ import anyio
 import bs4
 
 from ._callbacks import FileDownloadCallback, FolderDownloadCallback
-from ._fetch import retrieve_file, retrieve_folder
+from ._fetch import fetch_file, fetch_folder
 from ._records import File, Folder
 from ._url import extract_file_id, extract_folder_id, is_url
 from ._utils import check_file_path, check_folder_path, init_session
@@ -45,7 +45,7 @@ async def download_file(
     """
     if isinstance(x, str):
         id_ = extract_file_id(x) if is_url(x) else x
-        file = await retrieve_file(id_)
+        file = await fetch_file(id_)
     else:
         file = x
 
@@ -103,7 +103,7 @@ async def download_folder(
 
     if isinstance(x, str):
         id_ = extract_folder_id(x) if is_url(x) else x
-        folder = await retrieve_folder(id_)
+        folder = await fetch_folder(id_)
     else:
         folder = x
 

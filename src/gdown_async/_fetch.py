@@ -10,7 +10,7 @@ from ._url import extract_file_id, extract_folder_id, is_url
 from ._utils import init_session
 
 
-async def retrieve_file(id_or_url: str) -> File:
+async def fetch_file(id_or_url: str) -> File:
     """Retrieves the name of a Google Drive file.
 
     Args:
@@ -42,7 +42,7 @@ async def retrieve_file(id_or_url: str) -> File:
     return File(id_, soup.title.text.removesuffix(" - Google Drive"))
 
 
-async def retrieve_folder(id_or_url: str) -> Folder:
+async def fetch_folder(id_or_url: str) -> Folder:
     """Retrieves the structure of a Google Drive folder.
 
     Args:
