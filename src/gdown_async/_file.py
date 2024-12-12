@@ -144,7 +144,7 @@ def extract_file_id(url: str) -> str:
         url: The Google Drive URL.
 
     Returns:
-        The file ID if found, `None` otherwise.
+        The file ID extracted from the URL.
 
     Raises:
         ValueError: If the URL is invalid.

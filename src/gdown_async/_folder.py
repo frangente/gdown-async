@@ -113,7 +113,7 @@ def extract_folder_id(url: str) -> str:
         url: The Google Drive URL.
 
     Returns:
-        The folder ID if found, `None` otherwise.
+        The folder ID extracted from the URL.
 
     Raises:
         ValueError: If the URL is invalid.
@@ -143,7 +143,7 @@ async def find_subfolder_id(root: str, path: Sequence[str]) -> str:
         path: The path to the subfolder.
 
     Returns:
-        The ID of the subfolder if found, `None` otherwise.
+        The ID of the subfolder.
 
     Raises:
         ValueError: If the root folder URL is invalid.
@@ -193,7 +193,7 @@ async def retrieve_folder(id_or_url: str) -> Folder:
         id_or_url: The ID or URL of the Google Drive folder.
 
     Returns:
-        The folder structure if the folder exists, `None` otherwise.
+        The folder structure.
 
     Raises:
         ValueError: If the folder URL is invalid.
