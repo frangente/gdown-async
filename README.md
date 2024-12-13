@@ -110,7 +110,7 @@ The following optional flags are available for both file and folder downloads:
 When downloading a folder, you can also use the following optional flags:
 
 - `--max-concurrency` or `-c`: Maximum number of concurrent downloads (default: `None`). If not specified, no limit is set.
-- `--depth` or `-d`: Maximum depth of the folder structure to download (default: `None`). If not specified, the entire folder structure will be downloaded.
+- `--max-depth` or `-d`: Maximum depth of the folder structure to download (default: `None`). If not specified, the entire folder structure will be downloaded.
 
 ## License
 

@@ -42,33 +42,33 @@ async def fetch_file(id_or_url: str) -> File:
     return File(id_, soup.title.text.removesuffix(" - Google Drive"))
 
 
-async def fetch_folder(id_or_url: str, *, depth: int | None = None) -> Folder:
+async def fetch_folder(id_or_url: str, *, max_depth: int | None = None) -> Folder:
     """Retrieves the structure of a Google Drive folder.
 
     Args:
         id_or_url: The ID or URL of the Google Drive folder.
-        depth: Up to how many levels the folder structure should be fetched.
-            If `None`, the entire folder structure is fetched.
+        max_depth: The maximum depth of the folder structure to retrieve. If `None`, the
+            entire folder structure is fetched.
 
     Returns:
         The folder structure.
 
     Raises:
-        ValueError: If the depth is not a positive integer.
+        ValueError: If the maximum depth is not a positive integer.
         ValueError: If the folder URL is invalid.
         FileNotFoundError: If the folder does not exist.
     """
-    if depth is not None:
-        if depth < 1:
-            msg = f"The depth must be a positive integer, but got '{depth}'."
+    if max_depth is not None:
+        if max_depth < 1:
+            msg = f"Maximum depth must be a positive integer, got {max_depth}."
             raise ValueError(msg)
-    elif depth is None:
-        depth = -1
+    elif max_depth is None:
+        max_depth = -1
 
     id_ = extract_folder_id(id_or_url) if is_url(id_or_url) else id_or_url
     async with aiohttp.ClientSession() as session:
         init_session(session)
-        folder = await _fetch_folder_rec(id_, depth=depth, session=session)
+        folder = await _fetch_folder_rec(id_, depth=max_depth, session=session)
         if folder is None:
             msg = f"No folder found with ID '{id_}'."
             raise FileNotFoundError(msg)

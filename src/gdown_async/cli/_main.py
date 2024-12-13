@@ -49,8 +49,8 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "-d",
-        "--depth",
-        help="Up to how many levels to download.",
+        "--max-depth",
+        help="The maximum depth of the folder structure to download.",
         type=int,
         default=None,
     )
@@ -79,8 +79,8 @@ async def _download(args: argparse.Namespace) -> None:
             callback=ProgressFileDownloadCallback() if not args.quiet else None,
         )
     else:
-        if args.depth is not None:
-            folder = await fetch_folder(args.folder, depth=args.depth)
+        if args.max_depth is not None:
+            folder = await fetch_folder(args.folder, max_depth=args.max_depth)
         else:
             folder = await fetch_folder(args.folder)
 
