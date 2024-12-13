@@ -35,6 +35,9 @@ lint = [
   "pyproject-fmt>=2.5",
   "ruff>=0.8.1",
 ]
+tools = [
+  "griffe>=1.5",
+]
 
 [tool.ruff]
 target-version = "py310"
@@ -44,6 +47,7 @@ fix = true
 format.preview = true
 lint.select = [ "ALL" ]
 lint.ignore = [ "COM812", "ISC001", "PLR2004", "TRY301" ]
+lint.per-file-ignores."tools/*" = [ "D100", "INP001" ]
 lint.fixable = [ "ALL" ]
 lint.pydocstyle.convention = "google"
 

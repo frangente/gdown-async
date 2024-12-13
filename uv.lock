@@ -158,6 +158,15 @@ wheels = [
 ]
 
 [[package]]
+name = "colorama"
+version = "0.4.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44", size = 27697 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6", size = 25335 },
+]
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -257,6 +266,9 @@ lint = [
     { name = "pyproject-fmt" },
     { name = "ruff" },
 ]
+tools = [
+    { name = "griffe" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -272,6 +284,19 @@ lint = [
     { name = "basedpyright", specifier = ">=1.22" },
     { name = "pyproject-fmt", specifier = ">=2.5" },
     { name = "ruff", specifier = ">=0.8.1" },
+]
+tools = [{ name = "griffe", specifier = ">=1.5" }]
+
+[[package]]
+name = "griffe"
+version = "1.5.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d4/c9/8167810358ca129839156dc002526e7398b5fad4a9d7b6e88b875e802d0d/griffe-1.5.1.tar.gz", hash = "sha256:72964f93e08c553257706d6cd2c42d1c172213feb48b2be386f243380b405d4b", size = 384113 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/00/e693a155da0a2a72fd2df75b8fe338146cae59d590ad6f56800adde90cb5/griffe-1.5.1-py3-none-any.whl", hash = "sha256:ad6a7980f8c424c9102160aafa3bcdf799df0e75f7829d75af9ee5aef656f860", size = 127132 },
 ]
 
 [[package]]
