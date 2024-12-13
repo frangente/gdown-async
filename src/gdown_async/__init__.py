@@ -8,14 +8,14 @@ from ._download import download_file, download_folder
 from ._fetch import fetch_file, fetch_folder
 from ._records import File, Folder
 from ._url import extract_file_id, extract_folder_id, is_url
-
-__version__ = "0.0.1"
+from ._version import __version__
 
 __all__ = [
     "File",
     "FileDownloadCallback",
     "Folder",
     "FolderDownloadCallback",
+    "__version__",
     "download_file",
     "download_folder",
     "extract_file_id",
