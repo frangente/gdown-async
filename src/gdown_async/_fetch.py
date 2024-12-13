@@ -6,8 +6,7 @@ import anyio
 import bs4
 
 from ._records import File, Folder
-from ._url import extract_file_id, extract_folder_id, is_url
-from ._utils import init_session
+from ._utils import extract_file_id, extract_folder_id, init_session, is_url
 
 
 async def fetch_file(id_or_url: str) -> File:
